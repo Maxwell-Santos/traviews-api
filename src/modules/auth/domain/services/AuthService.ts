@@ -1,16 +1,15 @@
-import { createHash } from 'crypto'
 import jwt from 'jsonwebtoken'
-import { User } from '../../../user/domain/entities/User'
+import { hashPassword } from '../../../../shared/utils/hashPassword'
+import { IUser } from '../../../user/domain/entities/IUser'
 
 export const JWT_SECRET = process.env.JWT_SECRET || 'secreto'
 
 export class AuthService {
-  validatePassword(plain: string, ahash: string): boolean {
-    const hash = createHash('sha256')
-    return hash.update(plain).digest('hex') === ahash
+  validatePassword(incoming: string, found: string): boolean {
+    return hashPassword(incoming) === found
   }
 
-  generateToken(user: User): string {
+  generateToken(user: IUser): string {
     return jwt.sign({ sub: user.id, email: user.email }, JWT_SECRET, {
       expiresIn: '1m',
     })

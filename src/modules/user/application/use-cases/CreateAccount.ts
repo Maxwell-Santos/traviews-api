@@ -4,6 +4,7 @@ import { IUserRepository } from '../../domain/repositories/IUserRepository'
 import { EmailService } from '../../infra/services/EmailService'
 import { Email } from '../../../../shared/value-objects/Email'
 import { User } from '../../domain/entities/User'
+import { hashPassword } from '../../../../shared/utils/hashPassword'
 
 export class CreateAccount {
   constructor(
@@ -18,15 +19,8 @@ export class CreateAccount {
 
     const email = new Email(emailInput)
 
-    await this.userRepository.create(new User(name, email.getValue(), this.hashPassword(password)))
+    await this.userRepository.create(new User(name, email.getValue(), hashPassword(password)))
     await this.emailService.sendWelcomeEmail(email.getValue())
-  }
-
-  private hashPassword(password: string): string {
-    const hash = createHash('sha256')
-    hash.update(password)
-
-    return hash.digest('hex')
   }
 
   private async checkUserAlreadyExists(email: string): Promise<void> {

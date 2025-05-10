@@ -1,7 +1,7 @@
 import express from 'express'
 import session from 'express-session'
 import { userRoutes } from './modules/user/interface/routes'
-import { authRoutes } from './modules/auth/domain/interface/routes/authRoutes'
+import { authRoutes } from './modules/auth/interface/routes/authRoutes'
 import passport from 'passport'
 import './modules/auth/domain/infra/passport'
 

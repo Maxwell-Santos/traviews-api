@@ -1,31 +1,19 @@
 import passport from 'passport'
-import './googleStrategy.js'
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'
-import { JWT_SECRET } from '../../services/AuthService'
-import { User } from '../../../../user/domain/entities/User.js'
-import { createHash } from 'crypto'
+import { JWT_SECRET } from '../../domain/services/AuthService'
+import { UserRepository } from './../../../user/domain/repositories/UserRepository'
 
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: JWT_SECRET,
 }
 
+const userRepository = new UserRepository()
+
 passport.use(
   new JwtStrategy(opts, async (payload, done) => {
     try {
-      // encontrar usuário
-      // const user = await prisma.user.findUnique({ where: { id: payload.sub } });
-      console.log(payload)
-      const hash = createHash('sha256')
-
-      const user: User = {
-        id: '1',
-        name: 'John Doe',
-        email: 'max@gmail.com',
-        password: hash.update('123').digest('hex'),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date(),
-      }
+      const user = await userRepository.findById(payload.sub)
 
       if (user) return done(null, user)
       return done(null, false)
@@ -35,10 +23,7 @@ passport.use(
   }),
 )
 
-// require('./localStrategy')
-
 passport.serializeUser((user, done) => {
-  console.log(user)
   done(null, user)
 })
 
