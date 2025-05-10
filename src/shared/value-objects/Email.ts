@@ -16,8 +16,4 @@ export class Email {
   public getValue(): string {
     return this.value
   }
-
-  // public equals(other: Email): boolean {
-  //   return this.value === other.getValue()
-  // }
 }

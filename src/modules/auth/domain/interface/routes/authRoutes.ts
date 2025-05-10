@@ -1,25 +1,8 @@
 import { Router } from 'express'
-import passport from 'passport'
+import { AuthController } from '../controllers/AuthController'
 
 const router = Router()
 
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }))
-
-router.get(
-  '/google/callback',
-  passport.authenticate('google', {
-    failureRedirect: '/auth/failure',
-    successRedirect: '/auth/success',
-  }),
-)
-
-router.get('/success', (req, res) => {
-  res.send(`Bem-vindo(a), ${req.user.displayName}!`)
-})
-
-// Falha
-router.get('/failure', (req, res) => {
-  res.send('Falha na autenticação.')
-})
+router.get('/login', AuthController.login)
 
 export { router as authRoutes }
