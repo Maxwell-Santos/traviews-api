@@ -13,9 +13,10 @@ app.use(express.json())
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: 'secrete',
     resave: false,
     saveUninitialized: false,
+    cookie: { secure: true },
   }),
 )
 

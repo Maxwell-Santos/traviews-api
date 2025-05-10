@@ -32,7 +32,7 @@ export class CreateAccount {
   private async checkUserAlreadyExists(email: string): Promise<void> {
     const existingUser = await this.userRepository.findByEmail(email)
 
-    const error = new Error('User already exists')
+    const error = new Error('User already exists') as Error & { status: number }
     error.name = 'UserAlreadyExistsError'
     error.status = 409
 

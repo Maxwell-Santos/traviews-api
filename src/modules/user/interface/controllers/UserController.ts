@@ -4,7 +4,11 @@ import { UserRepository } from '../../domain/repositories/UserRepository'
 import { EmailService } from '../../infra/services/EmailService'
 
 export class UserController {
-  async create(req: Request, res: Response) {
+  static async profile(req: Request, res: Response) {
+    return res.status(200).json(req.user)
+  }
+
+  static async create(req: Request, res: Response) {
     const useCase = new CreateAccount(new UserRepository(), new EmailService())
 
     try {
