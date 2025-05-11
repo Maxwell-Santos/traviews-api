@@ -1,22 +1,40 @@
-import mysql from 'mysql2/promise'
+import { Pool } from 'pg'
 import 'dotenv/config'
 
-class Database {
-  private _pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: 'personalmoney',
-    waitForConnections: true, // Espera pela conexão caso todas estejam ocupadas
-    connectionLimit: 10, // Número máximo de conexões no pool
-    queueLimit: 0,
-    enableKeepAlive: true,
-    keepAliveInitialDelay: 0,
-  })
-
-  get pool() {
-    return this._pool
-  }
+export interface IDatabase {
+  query<T>(query: string, params: any[]): Promise<T[] | void>
 }
 
-export const DB = new Database()
+export class Database implements IDatabase {
+  private static instance: Database
+  private pool: Pool
+
+  private constructor() {
+    this.pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: false, // Supabase exige SSL
+      },
+    })
+  }
+
+  static getInstance() {
+    if (!Database.instance) {
+      Database.instance = new Database()
+    }
+    return Database.instance
+  }
+
+  public async query<T>(query: string, params: []): Promise<T[] | void> {
+    try {
+      const { rows, fields } = await this.pool.query(query, params)
+      return rows
+    } catch (err) {
+      console.error('Erro na consulta:', err)
+    }
+  }
+
+  public async end() {
+    await this.pool.end()
+  }
+}
