@@ -1,4 +1,3 @@
-import { createHash } from 'crypto'
 import { IUser } from '../../domain/entities/IUser'
 import { IUserRepository } from '../../domain/repositories/IUserRepository'
 import { EmailService } from '../../infra/services/EmailService'
@@ -24,13 +23,12 @@ export class CreateAccount {
   }
 
   private async checkUserAlreadyExists(email: string): Promise<void> {
-    const existingUser = await this.userRepository.findByEmail(email)
+    const result = await this.userRepository.findByEmail(email)
 
-    const error = new Error('User already exists') as Error & { status: number }
-    error.name = 'UserAlreadyExistsError'
-    error.status = 409
-
-    if (existingUser) {
+    if (result) {
+      const error = new Error('User already exists') as Error & { status: number }
+      error.name = 'UserAlreadyExistsError'
+      error.status = 409
       throw error
     }
   }

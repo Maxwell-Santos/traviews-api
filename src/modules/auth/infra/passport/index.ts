@@ -2,13 +2,14 @@ import passport from 'passport'
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'
 import { JWT_SECRET } from '../../domain/services/AuthService'
 import { UserRepository } from './../../../user/domain/repositories/UserRepository'
+import { Database } from '../../../../shared/database/connection'
 
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: JWT_SECRET,
 }
 
-const userRepository = new UserRepository()
+const userRepository = new UserRepository(Database.getInstance())
 
 passport.use(
   new JwtStrategy(opts, async (payload, done) => {
