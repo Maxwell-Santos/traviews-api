@@ -12,7 +12,7 @@ export class UserRepository implements IUserRepository {
 
   async findById(userId: string): Promise<IUser | null> {
     const result = await this.dbInstance.query<IUser>(
-      `SELECT email, name, created_at FROM "${this.table}" WHERE id = $1`,
+      `SELECT id, email, name, created_at FROM "${this.table}" WHERE id = $1`,
       [userId],
     )
 

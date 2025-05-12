@@ -6,6 +6,7 @@ import passport from 'passport'
 import './modules/auth/infra/passport'
 import 'dotenv/config'
 import { Database } from './shared/database/connection'
+import { postsRoutes } from './modules/posts/interface/routes'
 
 const app = express()
 const PORT = 3000
@@ -37,6 +38,7 @@ app.use((request, response, next) => {
 
 app.use(`/api/${version}/auth`, authRoutes)
 app.use(`/api/${version}/users`, userRoutes)
+app.use(`/api/${version}/posts`, postsRoutes)
 
 app.get(`api/${version}`, (req, res) => {
   res.send('Bem-vindo(a) ao TRAVIEWS API.')
