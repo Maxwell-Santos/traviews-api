@@ -1,4 +1,6 @@
 import { isValidDate, isValidISODateString } from '../../../../shared/utils/isValidDate'
+import { IFileToUpload } from '../../application/use-cases/PublishPostUseCase'
+import { MediaStorageFacade } from '../contracts/MediaStorateFacade'
 import { PublishPostDTO } from '../dto/PublishPostDTO'
 import { IPost, IVisitCosts } from './IPost'
 
@@ -41,6 +43,27 @@ export class Post implements IPost {
     ) {
       throw new Error('Costs must be non-negative')
     }
+  }
+
+  async generateMediaUploadUrls(mediaStorage: MediaStorageFacade): Promise<IFileToUpload[]> {
+    const filesToUpload: IFileToUpload[] = []
+    const publicUrls: string[] = []
+
+    const filePath = (fileName: string) => this.userId + '/' + fileName
+
+    for (const fileName of this.medias) {
+      try {
+        const signedUrl = await mediaStorage.generateSignedUploadUrl(filePath(fileName))
+        filesToUpload.push({ filePath: filePath(fileName), pathToUpload: signedUrl.uploadUrl })
+
+        publicUrls.push(mediaStorage.generatePublicUrl(filePath(fileName)))
+      } catch (error) {
+        console.error(`Falha ao gerar url para upload da imagem: ${filePath(fileName)}`)
+      }
+    }
+
+    this.medias = publicUrls
+    return filesToUpload
   }
 
   like() {}
