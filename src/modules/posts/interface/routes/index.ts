@@ -1,9 +1,14 @@
 import { Router } from 'express'
-import { UserController } from '../controllers/UserController'
+import { PostController } from '../controllers/PostsController'
+import { authenticateJWT } from '../../../../shared/middlewares/authMiddleware'
+import { SupabaseMediaStorageProvider } from '../../infra/supabase/SupabaseStorageProvider'
+import supabase from '../../infra/supabase/client'
 
 const router = Router()
-const controller = new UserController()
+const postController = new PostController(new SupabaseMediaStorageProvider(supabase))
 
-router.post('/', controller.create.bind(controller))
+router.post('/publish', authenticateJWT, (req, res, next) => {
+  postController.create(req, res).catch(next)
+})
 
-export { router as userRoutes }
+export { router as postsRoutes }

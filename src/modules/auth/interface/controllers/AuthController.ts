@@ -12,7 +12,7 @@ export class AuthController {
 
     try {
       const result = await useCase.execute({ email, password })
-      res.json({ data: result })
+      res.json({ token: result })
     } catch (error: any) {
       res.status(400).json({ error: error.message })
     }

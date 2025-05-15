@@ -11,7 +11,7 @@ export class AuthService {
 
   generateToken(user: IUser): string {
     return jwt.sign({ sub: user.id, email: user.email }, JWT_SECRET, {
-      expiresIn: '1m',
+      expiresIn: '10m',
     })
   }
 }
