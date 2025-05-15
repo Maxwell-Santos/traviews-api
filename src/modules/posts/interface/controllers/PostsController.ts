@@ -14,6 +14,7 @@ import { PostRepository } from '../../domain/repositories/PostRepository'
 import { Database } from '../../../../shared/database/connection'
 
 import { MediaStorageFacade } from '../../domain/contracts/MediaStorateFacade'
+import { ListPostsUseCase } from '../../application/use-cases/ListPostsUseCase'
 
 export class PostController {
   constructor(private readonly mediaStorage: MediaStorageFacade) {}
@@ -30,6 +31,25 @@ export class PostController {
     try {
       const result = await useCase.execute(req.body)
       res.status(201).json(result)
+    } catch (error: any) {
+      res.status(error.status || 400).json({ error: error.message })
+    }
+  }
+
+  async read(req: Request, res: Response) {
+    const limit = parseInt(req.query.limit as string) || 10
+    const cursor = req.query.cursor as string | undefined
+
+    const useCase = new ListPostsUseCase(new PostRepository(Database.getInstance()), limit, cursor)
+
+    try {
+      const result = await useCase.execute()
+
+      res.json({
+        data: result,
+        cursor: result?.length ? result[result.length - 1].createdAt : null,
+        hasMore: result.length === limit,
+      })
     } catch (error: any) {
       res.status(error.status || 400).json({ error: error.message })
     }
