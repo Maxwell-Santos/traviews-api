@@ -3,6 +3,6 @@ import { AuthController } from '../controllers/AuthController'
 
 const router = Router()
 
-router.get('/login', AuthController.login)
+router.post('/login', AuthController.login)
 
 export { router as authRoutes }
