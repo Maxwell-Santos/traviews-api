@@ -7,6 +7,10 @@ import supabase from '../../infra/supabase/client'
 const router = Router()
 const postController = new PostController(new SupabaseMediaStorageProvider(supabase))
 
+router.get('/', authenticateJWT, (req, res, next) => {
+  postController.read(req, res).catch(next)
+})
+
 router.post('/publish', authenticateJWT, (req, res, next) => {
   postController.create(req, res).catch(next)
 })

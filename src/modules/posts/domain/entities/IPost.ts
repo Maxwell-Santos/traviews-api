@@ -5,6 +5,7 @@ export interface IVisitCosts {
 }
 
 export interface IPost {
+  id?: string
   userId: string
   date: string
   medias: string[]

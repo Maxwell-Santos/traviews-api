@@ -1,5 +1,8 @@
 import { IDatabase } from '../../../../shared/database/connection'
+import { keysToCamel } from '../../../../shared/utils/keysToCamel'
+import supabase from '../../infra/supabase/client'
 import { PublishPostDTO } from '../dto/PublishPostDTO'
+import { IPost } from '../entities/IPost'
 import { IPostRepository } from './IPostRepository'
 
 export class PostRepository implements IPostRepository {
@@ -29,5 +32,28 @@ export class PostRepository implements IPostRepository {
     }
 
     return { id: result[0].id }
+  }
+
+  async getPosts(limit: number, cursor: string): Promise<IPost[]> {
+    let query = supabase
+      .from(this.table)
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(limit)
+
+    if (cursor) {
+      query = query.lt('created_at', cursor)
+    }
+
+    const { data, error } = await query
+
+    if (error) {
+      const e = new Error(error.message) as Error & { status?: number }
+      e.status = 500
+
+      throw e
+    }
+
+    return keysToCamel(data)
   }
 }
