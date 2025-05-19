@@ -11,15 +11,19 @@ export class CreateAccount {
     private readonly emailService: EmailService,
   ) {}
 
-  async execute(input: IUser): Promise<void> {
+  async execute(input: IUser): Promise<{ id: string }> {
     const { email: emailInput, name, password } = input
 
     await this.checkUserAlreadyExists(emailInput)
 
     const email = new Email(emailInput)
 
-    await this.userRepository.create(new User(name, email.getValue(), hashPassword(password)))
+    const created = await this.userRepository.create(
+      new User(name, email.getValue(), hashPassword(password)),
+    )
     await this.emailService.sendWelcomeEmail(email.getValue())
+
+    return created
   }
 
   private async checkUserAlreadyExists(email: string): Promise<void> {

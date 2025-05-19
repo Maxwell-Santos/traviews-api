@@ -16,7 +16,8 @@ export class UserController {
     )
 
     try {
-      return await useCase.execute(req.body)
+      const result = await useCase.execute(req.body)
+      res.json({ id: result.id })
     } catch (error: any) {
       res.status(error.status || 400).json({ error: error.message })
     }
