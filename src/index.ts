@@ -40,7 +40,7 @@ app.use(`/api/${version}/auth`, authRoutes)
 app.use(`/api/${version}/users`, userRoutes)
 app.use(`/api/${version}/posts`, postsRoutes)
 
-app.get(`api/${version}`, (req, res) => {
+app.get(`/api/${version}`, (req, res) => {
   res.send('Bem-vindo(a) ao TRAVIEWS API.')
 })
 
