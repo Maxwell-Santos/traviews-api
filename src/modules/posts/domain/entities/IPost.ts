@@ -12,6 +12,7 @@ export interface IPost {
   description: string
   visitCosts: IVisitCosts
   createdAt: string
+  User: { id: string; name: string }
   like(): void
   comment(): void
   edit(): void

@@ -37,7 +37,7 @@ export class PostRepository implements IPostRepository {
   async getPosts(limit: number, cursor: string): Promise<IPost[]> {
     let query = supabase
       .from(this.table)
-      .select('*')
+      .select(`*, User (id,name)`)
       .order('created_at', { ascending: false })
       .limit(limit)
 
