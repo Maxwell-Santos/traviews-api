@@ -7,7 +7,13 @@ export class LoginUser {
     private readonly authService: AuthService,
   ) {}
 
-  async execute({ email, password }: { email: string; password: string }): Promise<string> {
+  async execute({
+    email,
+    password,
+  }: {
+    email: string
+    password: string
+  }): Promise<{ id: string; token: string }> {
     const user = await this.userRepository.findByEmail(email)
 
     if (!user) {
@@ -22,6 +28,6 @@ export class LoginUser {
       throw new Error('Invalid credentials')
     }
 
-    return this.authService.generateToken(user)
+    return { id: user.id, token: this.authService.generateToken(user) }
   }
 }

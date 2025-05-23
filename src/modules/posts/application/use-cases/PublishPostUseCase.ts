@@ -21,7 +21,15 @@ export class PublishPostUseCase {
       throw new Error('User ID is required')
     }
 
-    const post = new Post(data)
+    const post = new Post({
+      id: '',
+      likes: [],
+      User: { id: '', name: '' },
+      foodCost: 0,
+      accommodationCost: 0,
+      entertainmentCost: 0,
+      ...data,
+    })
 
     const filesToUpload = await post.generateMediaUploadUrls(this.mediaStorage)
 

@@ -1,6 +1,7 @@
 import { IDatabase } from '../../../../shared/database/connection'
 import { keysToCamel } from '../../../../shared/utils/keysToCamel'
 import supabase from '../../infra/supabase/client'
+import { PostDTO } from '../dto/PostDTO'
 import { PublishPostDTO } from '../dto/PublishPostDTO'
 import { IPost } from '../entities/IPost'
 import { IPostRepository } from './IPostRepository'
@@ -34,7 +35,7 @@ export class PostRepository implements IPostRepository {
     return { id: result[0].id }
   }
 
-  async getPosts(limit: number, cursor: string): Promise<IPost[]> {
+  async getPosts(limit: number, cursor: string): Promise<PostDTO[]> {
     let query = supabase
       .from(this.table)
       .select(`*, User (id,name)`)
@@ -46,6 +47,32 @@ export class PostRepository implements IPostRepository {
     }
 
     const { data, error } = await query
+
+    if (error) {
+      const e = new Error(error.message) as Error & { status?: number }
+      e.status = 500
+
+      throw e
+    }
+
+    return keysToCamel(data)
+  }
+
+  async update(entity: IPost): Promise<{ id: string }> {
+    const result = await this.dbInstance.query<{ id: string }>(
+      `UPDATE "${this.table}" SET likes = $1 WHERE id = $2 RETURNING id`,
+      [entity.likes, entity.id],
+    )
+
+    if (!result) {
+      throw new Error('Query returned void')
+    }
+
+    return { id: result[0].id }
+  }
+
+  async findById(id: string): Promise<PostDTO> {
+    const { data, error } = await supabase.from(this.table).select(`*`).eq('id', id).single()
 
     if (error) {
       const e = new Error(error.message) as Error & { status?: number }
