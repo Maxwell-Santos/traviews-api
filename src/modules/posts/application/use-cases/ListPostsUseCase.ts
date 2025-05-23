@@ -1,4 +1,4 @@
-import { IPost } from '../../domain/entities/IPost'
+import { PostDTO } from '../../domain/dto/PostDTO'
 import { PostRepository } from '../../domain/repositories/PostRepository'
 
 export class ListPostsUseCase {
@@ -8,7 +8,7 @@ export class ListPostsUseCase {
     private readonly cursor: string = '',
   ) {}
 
-  async execute(): Promise<IPost[]> {
+  async execute(): Promise<PostDTO[]> {
     const posts = await this.postRepository.getPosts(this.limit, this.cursor)
     return posts
   }

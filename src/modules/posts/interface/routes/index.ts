@@ -15,4 +15,8 @@ router.post('/publish', authenticateJWT, (req, res, next) => {
   postController.create(req, res).catch(next)
 })
 
+router.post('/like/:postId', authenticateJWT, (req, res, next) => {
+  postController.update(req, res).catch(next)
+})
+
 export { router as postsRoutes }

@@ -15,6 +15,7 @@ import { Database } from '../../../../shared/database/connection'
 
 import { MediaStorageFacade } from '../../domain/contracts/MediaStorateFacade'
 import { ListPostsUseCase } from '../../application/use-cases/ListPostsUseCase'
+import { LikePostUseCase } from '../../application/use-cases/LikePost'
 
 export class PostController {
   constructor(private readonly mediaStorage: MediaStorageFacade) {}
@@ -30,6 +31,24 @@ export class PostController {
 
     try {
       const result = await useCase.execute(req.body)
+      res.status(201).json(result)
+    } catch (error: any) {
+      res.status(error.status || 400).json({ error: error.message })
+    }
+  }
+
+  async update(req: Request, res: Response) {
+    const postId = req.params.postId
+
+    const useCase = new LikePostUseCase(new PostRepository(Database.getInstance()))
+    const userId = req.user?.id // Assumindo que req.user é populador pelo JWT middleware
+
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' })
+    }
+
+    try {
+      const result = await useCase.execute({ id: postId, userLikedId: userId })
       res.status(201).json(result)
     } catch (error: any) {
       res.status(error.status || 400).json({ error: error.message })

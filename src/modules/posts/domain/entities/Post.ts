@@ -1,6 +1,7 @@
 import { isValidDate, isValidISODateString } from '../../../../shared/utils/isValidDate'
 import { IFileToUpload } from '../../application/use-cases/PublishPostUseCase'
 import { MediaStorageFacade } from '../contracts/MediaStorateFacade'
+import { PostDTO } from '../dto/PostDTO'
 import { PublishPostDTO } from '../dto/PublishPostDTO'
 import { IPost, IVisitCosts } from './IPost'
 
@@ -11,8 +12,12 @@ export class Post implements IPost {
   description: string
   visitCosts: IVisitCosts
   createdAt: string
+  id?: string | undefined
+  likes: string[]
+  User: { id: string; name: string }
 
-  constructor(data: PublishPostDTO) {
+  constructor(data: PostDTO) {
+    this.id = data.id
     this.userId = data.userId.trim()
     this.medias = data.medias
     this.date = data.date.trim()
@@ -20,6 +25,9 @@ export class Post implements IPost {
 
     this.visitCosts = data.visitCosts
     this.createdAt = new Date().toISOString()
+    this.likes = data.likes
+    this.User = data.User
+
     this.validate()
   }
 
@@ -66,8 +74,15 @@ export class Post implements IPost {
     return filesToUpload
   }
 
-  like() {}
-  comment() {}
-  edit() {}
-  exclude() {}
+  like(userLikedId: string) {
+    const likes = new Set(this.likes)
+
+    if (likes.has(userLikedId)) {
+      likes.delete(userLikedId)
+    } else {
+      likes.add(userLikedId)
+    }
+
+    this.likes = Array.from(likes)
+  }
 }

@@ -13,8 +13,6 @@ export interface IPost {
   visitCosts: IVisitCosts
   createdAt: string
   User: { id: string; name: string }
-  like(): void
-  comment(): void
-  edit(): void
-  exclude(): void
+  likes: string[]
+  like(userId: string): void
 }
