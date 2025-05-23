@@ -16,12 +16,13 @@ export class PostRepository implements IPostRepository {
 
   async create(entity: PublishPostDTO): Promise<{ id: string }> {
     const result = await this.dbInstance.query<{ id: string }>(
-      `INSERT INTO "${this.table}" (user_id, date, description, medias, food_cost, accommodation_cost, entertainment_cost) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
+      `INSERT INTO "${this.table}" (user_id, date, description, medias, likes, food_cost, accommodation_cost, entertainment_cost) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
       [
         entity.userId,
         entity.date,
         entity.description,
         entity.medias,
+        [],
         entity.visitCosts.food,
         entity.visitCosts.accommodation,
         entity.visitCosts.entertainment,
