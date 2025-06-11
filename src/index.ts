@@ -7,6 +7,8 @@ import './modules/auth/infra/passport'
 import 'dotenv/config'
 import { Database } from './shared/database/connection'
 import { postsRoutes } from './modules/posts/interface/routes'
+import swaggerUi from 'swagger-ui-express'
+import swaggerSpec from './swagger'
 
 const app = express()
 const PORT = 3000
@@ -39,13 +41,17 @@ app.use((request, response, next) => {
 app.use(`/api/${version}/auth`, authRoutes)
 app.use(`/api/${version}/users`, userRoutes)
 app.use(`/api/${version}/posts`, postsRoutes)
+app.use(`/api/${version}/docs`, swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 app.get(`/api/${version}`, (req, res) => {
-  res.send('Bem-vindo(a) ao TRAVIEWS API.')
+  res.send(`
+    <h1>Bem-vindo(a) ao TRAVIEWS API.</h1>
+    <p>Para acessar a documentação, acesse <a href="/api/v1/docs">/api/v1/docs</a>.</p>
+    `)
 })
 
 app.listen(PORT, () => {
-  console.log(`Running in http://localhost:${PORT}`)
+  console.log(`Running in http://localhost:${PORT}/api/${version}`)
 })
 
 async function ShutdownDatabase() {
